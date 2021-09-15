@@ -1,0 +1,99 @@
+<head>
+<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:400,700" rel="stylesheet">
+<link href='style.css' rel='stylesheet' type='text/css'>
+<title>transvalues Quiz</title>
+<link rel="icon" type="x-icon" href="icon.png">
+<link rel="shortcut icon" type="x-icon" href="icon.png">
+<meta charset="utf-8">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6511426299019766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+<body>
+<script type="application/javascript"
+        src="questions.js">
+</script>
+<h1>transvalues</h1>
+<h2 id="twitplug">by <a id="twitplug" href="https://twitter.com/coolestrogen">@coolestrogen</a></h2>
+<hr>
+<h2 style="text-align:center;" id="question-number">Loading...</h2>
+<p class="question" id="question-text"></p>
+<button class="button stronglyAgree" onclick="next_question( 1.0)">Strongly Agree</button> <br>
+<button class="button agree" onclick="next_question( 0.7)">Agree</button> <br>
+<button class="button neutral" onclick="next_question( 0.0)">Neutral/Unsure</button> <br>
+<button class="button disagree" onclick="next_question(-0.7)">Disagree</button> <br>
+<button class="button stronglyDisagree" onclick="next_question(-1.0)">Strongly Disagree</button> <br>
+<button class="small_button" onclick="prev_question()" id="back_button">Back</button>
+<button class="small_button_off" id="back_button_off">Back</button><br>
+
+<!-- JavaScript for the test itself -->
+<script>
+    var max_socials, max_trus, max_hrt, max_lib; // Max possible scores
+    max_socials = max_trus = max_hrt = max_lib = 0;
+    let socials_array = new Array(questions.length);
+    let trus_array = new Array(questions.length);
+    let hrt_array = new Array(questions.length);
+    let lib_array = new Array(questions.length);
+    var qn = 0; // Question number
+    init_question();
+    for (var i = 0; i < questions.length; i++) {
+        max_socials += Math.abs(questions[i].effect.socials)
+        max_trus += Math.abs(questions[i].effect.trus)
+        max_hrt += Math.abs(questions[i].effect.hrt)
+        max_lib += Math.abs(questions[i].effect.lib)
+    }
+    function init_question() {
+        document.getElementById("question-text").innerHTML = questions[qn].question;
+        document.getElementById("question-number").innerHTML = "Question " + (qn + 1) + " of " + (questions.length);
+        if (qn == 0) {
+            document.getElementById("back_button").style.display = 'none';
+            document.getElementById("back_button_off").style.display = 'block';
+        } else {
+            document.getElementById("back_button").style.display = 'block';
+            document.getElementById("back_button_off").style.display = 'none';
+        }
+
+    }
+
+    function next_question(mult) {
+        socials_array[qn] = mult*questions[qn].effect.socials
+        trus_array[qn] = mult*questions[qn].effect.trus
+        hrt_array[qn] = mult*questions[qn].effect.hrt
+        lib_array[qn] = mult*questions[qn].effect.lib
+        qn++;
+        if (qn < questions.length) {
+            init_question();
+        } else {
+            results();
+        }
+    }
+
+    function prev_question() {
+        if (qn == 0) {
+            return;
+        }
+        qn--;
+        init_question();
+    }
+
+    function calc_score(score,max) {
+        return (100*(max+score)/(2*max)).toFixed(1)
+    }
+
+    function results() {
+        let final_socials = socials_array.reduce((a, b) => a + b, 0)
+        let final_trus = trus_array.reduce((a, b) => a + b, 0)
+        let final_hrt = hrt_array.reduce((a, b) => a + b, 0)
+        let final_lib = lib_array.reduce((a, b) => a + b, 0)
+        location.href = `results.html`
+            + `?e=${calc_score(final_socials,max_socials)}`
+            + `&d=${calc_score(final_trus,max_trus)}`
+            + `&g=${calc_score(final_hrt,max_hrt)}`
+            + `&s=${calc_score(final_lib,max_lib)}`
+    }
+</script>
+</body>
